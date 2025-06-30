@@ -1,5 +1,5 @@
-import { Card, Container, Grid2, Skeleton, Stack, Typography } from '@mui/material'
-import { ChangeEvent, FC, useEffect, useMemo } from 'react'
+import { Card, Container, Grid2, MenuItem, Select, SelectChangeEvent, Skeleton, Stack, Typography } from '@mui/material'
+import { ChangeEvent, FC, useEffect, useMemo, useState } from 'react'
 import PaginationComponent from '@/components/pagination'
 import { productsActions } from '@/store/products'
 import { useSelector } from '@/hooks/use-selector'
@@ -9,8 +9,12 @@ import LazyImage from '@/components/image'
 import { useDispatch } from 'react-redux'
 import api from '@/helpers/api'
 import Product from './Product'
+import VirtualProducts from './VirtualProducts'
+
+const pageSizeList: number[] = [10, 30, 50, 70, 100, 200]
 
 const Index: FC = () => {
+	const [pageSize, setPageSize] = useState<number>(100)
 	const dispatch = useDispatch()
 	const [t] = useTranslation()
 
@@ -23,10 +27,10 @@ const Index: FC = () => {
 
 	const productsOnStack = useMemo(() => products.filter(product => product.stocks.length), [products])
 
-	const getProducts = async (payload: number) => {
+	const getProducts = async (page: number, size: number) => {
 		try {
 			dispatch(productsActions.setLoading(true))
-			const { data, status } = await api.get(PRODUCTS_URL, { params: { page: payload } })
+			const { data, status } = await api.get(PRODUCTS_URL, { params: { page, size } })
 
 			if (status === 200) {
 				dispatch(productsActions.setProducts(data.items))
@@ -41,11 +45,16 @@ const Index: FC = () => {
 	}
 
 	const handleChangePagination = (_: ChangeEvent<unknown>, newPage: number) => {
-		getProducts(newPage)
+		getProducts(newPage, pageSize)
+	}
+
+	const handleChange = (event: SelectChangeEvent) => {
+		setPageSize(Number(event.target.value))
+		getProducts(page as number, Number(event.target.value))
 	}
 
 	useEffect(() => {
-		getProducts(1)
+		getProducts(1, pageSize)
 	}, [])
 
 	return (
@@ -62,14 +71,28 @@ const Index: FC = () => {
 					))
 				) : productsOnStack.length ? (
 					<>
-						{productsOnStack.map(product => (
-							<Grid2 key={product.id} size={{ xs: 12, sm: 6, md: 4 }}>
-								<Product data={product} />
+						{products.length > 30 ? (
+							<Grid2 size={12}>
+								<VirtualProducts products={productsOnStack} />
 							</Grid2>
-						))}
+						) : (
+							productsOnStack.map(product => (
+								<Grid2 key={product.id} size={{ xs: 12, sm: 6, md: 4 }}>
+									<Product data={product} />
+								</Grid2>
+							))
+						)}
+
 						{page && total_count && (
 							<Grid2 size={12}>
-								<Stack sx={{ py: 2 }}>
+								<Stack sx={{ py: 2, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+									<Select size='small' value={`${pageSize}`} onChange={handleChange}>
+										{pageSizeList.map(item => (
+											<MenuItem key={item} value={`${item}`}>
+												{item}
+											</MenuItem>
+										))}
+									</Select>
 									<PaginationComponent page={page} handleChange={handleChangePagination} pageCount={Math.ceil(total_count / 100)} />
 								</Stack>
 							</Grid2>
