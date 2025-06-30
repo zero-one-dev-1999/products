@@ -1,15 +1,20 @@
-import { Avatar, IconButton, Menu, MenuItem, Tooltip, Typography } from '@mui/material'
+import { Avatar, IconButton, Menu, MenuItem, Stack, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { FC, MouseEvent, useState } from 'react'
 import Iconify from '@/components/iconify'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from '@/hooks/use-dispatch'
 import { appActions } from '@/store/app'
+import ThemeMode from './ThemeMode'
+import Language from './Language'
 
 const Profile: FC = () => {
 	const [t] = useTranslation()
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const open = Boolean(anchorEl)
 	const dispatch = useDispatch()
+	const theme = useTheme()
+
+	const matchesSm = useMediaQuery(theme.breakpoints.down('sm'))
 
 	const handleClick = (event: MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget)
@@ -66,6 +71,19 @@ const Profile: FC = () => {
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 			>
+				{matchesSm && (
+					<>
+						<MenuItem disableRipple sx={{ pl: 0.5 }}>
+							<ThemeMode />
+						</MenuItem>
+						<MenuItem disableRipple>
+							<Stack sx={{ width: '100%' }}>
+								<Language />
+							</Stack>
+						</MenuItem>
+					</>
+				)}
+
 				<MenuItem
 					sx={{
 						pr: 6,

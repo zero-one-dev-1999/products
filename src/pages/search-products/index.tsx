@@ -70,7 +70,7 @@ const Index: FC = () => {
 					value={text}
 					onChange={handleChangeInput}
 					placeholder={t('search')}
-					sx={{ width: '50%' }}
+					sx={{ width: '60%' }}
 					slotProps={{
 						input: {
 							endAdornment: <Iconify icon='tdesign:search' width={25} />,
@@ -81,7 +81,7 @@ const Index: FC = () => {
 			<Grid2 container spacing={1}>
 				{loading ? (
 					Array.from({ length: 30 }).map((_, index) => (
-						<Grid2 key={index} size={4}>
+						<Grid2 key={index} size={{ xs: 12, sm: 6, md: 4 }}>
 							<Skeleton component={Card} variant='rectangular' animation='wave' sx={{ py: 5, width: '100%' }} />
 						</Grid2>
 					))

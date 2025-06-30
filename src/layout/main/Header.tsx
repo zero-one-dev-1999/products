@@ -1,4 +1,4 @@
-import { Container, IconButton, Stack, Tooltip } from '@mui/material'
+import { Container, IconButton, Stack, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import { FC } from 'react'
 import Language from './Language'
 import FullScreen from './FullScreen'
@@ -12,6 +12,10 @@ import { useTranslation } from 'react-i18next'
 
 const Header: FC = () => {
 	const [t] = useTranslation()
+	const theme = useTheme()
+
+	const matchesMd = useMediaQuery(theme.breakpoints.down('md'))
+	const matchesSm = useMediaQuery(theme.breakpoints.down('sm'))
 	return (
 		<Container sx={{ height: '80px' }}>
 			<Stack sx={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -24,9 +28,15 @@ const Header: FC = () => {
 							</IconButton>
 						</Tooltip>
 					</Link>
-					<FullScreen />
-					<ThemeMode />
-					<Language />
+					{!matchesMd && <FullScreen />}
+
+					{!matchesSm && (
+						<>
+							<ThemeMode />
+							<Language />
+						</>
+					)}
+
 					<Profile />
 				</Stack>
 			</Stack>

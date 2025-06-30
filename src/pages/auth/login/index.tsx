@@ -11,13 +11,18 @@ import { FC, useState } from 'react'
 import api from '@/helpers/api'
 import * as Yup from 'yup'
 
+interface IFormValues {
+	username: string
+	password: string
+}
+
 const LoginPage: FC = () => {
 	const dispatch = useDispatch()
 	const [t] = useTranslation()
 	const [showPassword, setShowPassword] = useState(false)
 	const [loading, setLoading] = useState(false)
 
-	const handleLogin = async (payload: { username: string; password: string }) => {
+	const handleLogin = async (payload: IFormValues) => {
 		const params = new URLSearchParams()
 		params.append('_username', payload.username)
 		params.append('_password', payload.password)
@@ -54,7 +59,7 @@ const LoginPage: FC = () => {
 			username: Yup.string().required(),
 			password: Yup.string().required(),
 		}),
-		onSubmit: (values: { username: string; password: string }) => handleLogin(values),
+		onSubmit: (values: IFormValues) => handleLogin(values),
 	})
 
 	return (

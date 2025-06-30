@@ -56,7 +56,7 @@ const Index: FC = () => {
 			<Grid2 container spacing={1}>
 				{loading ? (
 					Array.from({ length: 18 }).map((_, index) => (
-						<Grid2 key={index} size={4}>
+						<Grid2 key={index} size={{ xs: 12, sm: 6, md: 4 }}>
 							<Skeleton component={Card} variant='rectangular' animation='wave' sx={{ py: 10, width: '100%' }} />
 						</Grid2>
 					))

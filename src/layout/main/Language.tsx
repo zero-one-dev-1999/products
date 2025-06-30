@@ -1,12 +1,15 @@
 import { languageList } from '@/i18n/config'
-import { Avatar, IconButton, Menu, MenuItem, Tooltip, Typography } from '@mui/material'
+import { Avatar, IconButton, Menu, MenuItem, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { MouseEvent, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const Language = () => {
+	const theme = useTheme()
 	const { t, i18n } = useTranslation()
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const open = Boolean(anchorEl)
+
+	const matchesSm = useMediaQuery(theme.breakpoints.down('sm'))
 
 	const currentLang = useMemo(() => languageList.find(f => f.value === i18n.language), [i18n.language])
 
@@ -25,9 +28,15 @@ const Language = () => {
 	return (
 		<>
 			<Tooltip title={t('language')}>
-				<IconButton onClick={handleClick} size='small' aria-controls={open ? 'language' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined}>
-					<Avatar sx={{ width: 36, height: 36 }} src={currentLang?.icon} />
-				</IconButton>
+				{!matchesSm ? (
+					<IconButton onClick={handleClick} size='small' aria-controls={open ? 'language' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined}>
+						<Avatar sx={{ width: 36, height: 36 }} src={currentLang?.icon} />
+					</IconButton>
+				) : (
+					<Typography onClick={handleClick} variant='subtitle1' aria-controls={open ? 'language' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined}>
+						{t('language')}
+					</Typography>
+				)}
 			</Tooltip>
 			<Menu
 				anchorEl={anchorEl}
